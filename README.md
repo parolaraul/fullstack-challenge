@@ -13,6 +13,7 @@ day.
 
 Tell us about one of your commercial projects with Node.js and/or Vue.js.
 
+[ANSWER](ABOUT_ME.md) 
 
 ## 2. Document versioning
 
@@ -26,6 +27,8 @@ Your approach should:
 - [ ] prioritize disk space efficiency
 - [ ] discuss any trade-offs made, as well as potential mitigations
 - [ ] consider any potential domain-specific issues
+
+[ANSWER](NOVEL_VERSIONING.md)
 
 ## 3. Node.js REST API
 
@@ -75,6 +78,8 @@ Your solution should:
 Production-grade server
 - [ ] be data store agnostic
 
+[ANSWER](backend)
+
 ## 4. SPA
 
 Using **Vue.js**, create a basic SPA that implements the following UI:
@@ -94,3 +99,5 @@ Your solution should:
 - [ ] be scalable — this is a small app, but write it as if it will grow into a full, 
 Production-grade SPA
 - [ ] assume books will be fetched over HTTP
+
+[ANSWER](frontend)
