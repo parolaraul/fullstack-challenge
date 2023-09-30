@@ -5,11 +5,11 @@ import { ApiTags } from '@nestjs/swagger';
 @Controller()
 @ApiTags('health-check')
 export class HealthController {
-    constructor(private health: HealthCheckService) {}
+  constructor(private health: HealthCheckService) {}
 
-    @Get('health-check')
-    @HealthCheck()
-    healthCheck() {
-        return this.health.check([]);
-    }
+  @Get('health-check')
+  @HealthCheck()
+  healthCheck() {
+    return this.health.check([]);
+  }
 }

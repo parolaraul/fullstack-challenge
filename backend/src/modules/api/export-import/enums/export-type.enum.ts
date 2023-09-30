@@ -1,4 +1,4 @@
-export enum ExportTypeEnum{
-    Pdf = "pdf",
-    Epub = "epub"
+export enum ExportTypeEnum {
+  Pdf = 'pdf',
+  Epub = 'epub',
 }

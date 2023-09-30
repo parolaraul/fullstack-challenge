@@ -706,10 +706,10 @@
   resolved "https://registry.npmjs.org/@nestjs/mapped-types/-/mapped-types-2.0.2.tgz"
   integrity sha512-V0izw6tWs6fTp9+KiiPUbGHWALy563Frn8X6Bm87ANLRuE46iuBMD5acKBDP5lKL/75QFvrzSJT7HkCbB0jTpg==
 
-"@nestjs/platform-express@^10.0.0", "@nestjs/platform-express@^10.2.5":
-  version "10.2.5"
-  resolved "https://registry.npmjs.org/@nestjs/platform-express/-/platform-express-10.2.5.tgz"
-  integrity sha512-BChjJfsVtsvds31rp5V7LwM2XEQaxkFKUE0TGSH91m95FRO65Fii5RH6atasmhZTIW+T8LR5LuI/MO7cgZOiVg==
+"@nestjs/platform-express@^10.0.0", "@nestjs/platform-express@^10.2.6":
+  version "10.2.6"
+  resolved "https://registry.npmjs.org/@nestjs/platform-express/-/platform-express-10.2.6.tgz"
+  integrity sha512-4U16D5ot2570CR8Qm5qu/SBXsA2l5KxN7AVSGvzoWoBxjEoOnnZOapC5Pler3yYa0tT1xLhji61RX1gceKW3dw==
   dependencies:
     body-parser "1.20.2"
     cors "2.8.5"
@@ -747,10 +747,10 @@
     boxen "5.1.2"
     check-disk-space "3.4.0"
 
-"@nestjs/testing@^10.2.5":
-  version "10.2.5"
-  resolved "https://registry.npmjs.org/@nestjs/testing/-/testing-10.2.5.tgz"
-  integrity sha512-CaM8STNVyDdMhYnDD6aYnVWPz2ienrSDgMl7nkCAC0wcvKhldWuXQ2syTvQE243IIFOX/bMNuW3MsiqbaXfXxQ==
+"@nestjs/testing@^10.2.6":
+  version "10.2.6"
+  resolved "https://registry.npmjs.org/@nestjs/testing/-/testing-10.2.6.tgz"
+  integrity sha512-uxlxHhpSvG4yDTPmuPneoQL1/UnBkOkzE+Zaz6bwURg7lc3uS4ZsXl75OL3pYaJH37rHYXYT9bGcYSpxVbwIrg==
   dependencies:
     tslib "2.6.2"
 
@@ -3467,7 +3467,7 @@ jest-worker@^27.4.5, jest-worker@^27.5.1:
     merge-stream "^2.0.0"
     supports-color "^8.0.0"
 
-jest@^27.0.0, jest@^27.2.5:
+jest@^27.0.0, jest@^27.5.1:
   version "27.5.1"
   resolved "https://registry.npmjs.org/jest/-/jest-27.5.1.tgz"
   integrity sha512-Yn0mADZB89zTtjkPJEXwrac3LHudkQMR+Paqa8uxJHCBr9agxztUifWCyiYrjhMPBoUVBjyny0I7XH6ozDr7QQ==
