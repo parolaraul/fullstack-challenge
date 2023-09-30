@@ -22,6 +22,7 @@
         <template v-for="(book, index) in books" :key="book.id">
           <tr
             class="cursor-pointer"
+            :id="'book-' + index"
             :class="index % 2 === 0 ? 'bg-beige' : 'bg-white'"
             @click="toggleDetails(book)"
           >

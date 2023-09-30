@@ -11,7 +11,7 @@
 
     <pagination
       :totalPages="meta.total_pages"
-      :currentPage="this.meta.current_page"
+      :currentPage="meta.current_page"
       @page-change="changePage"
     ></pagination>
   </div>

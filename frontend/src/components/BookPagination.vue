@@ -3,6 +3,7 @@
     <ul class="flex space-x-4">
       <li>
         <button
+          id="prev-button"
           @click="changePage(currentPage - 1)"
           :disabled="currentPage === 1"
           class="flex items-center text-gray-600 hover:text-gray-900 cursor-pointer disabled:opacity-50 disabled:pointer-events-none"
@@ -13,8 +14,9 @@
       <li class="flex items-center text-gray-600">
         Page {{ currentPage }} of {{ totalPages }}
       </li>
-      <li v-if="currentPage < totalPages">
+      <li>
         <button
+          id="next-button"
           @click="changePage(currentPage + 1)"
           :disabled="currentPage === totalPages"
           class="flex items-center text-gray-600 hover:text-gray-900 cursor-pointer disabled:opacity-50 disabled:pointer-events-none"
