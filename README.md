@@ -1,12 +1,5 @@
 # Node.js Fullstack Engineer Challenge
 
-You can submit all the answers to this assignment in a **private**, single repository or as a 
-zipped folder, containing markdown and code. If you use GitHub, please share your answers with 
-[**reedsyapplications**](https://github.com/reedsyapplications).
-
-Answering all the questions to a Production-level standard should take approximately 1 work 
-day.
-
 **For coding questions use the latest Node LTS**.
 
 ## 1. About you
