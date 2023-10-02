@@ -1,91 +1,90 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { ExportDto } from './dto/export.dto';
 import { ImportDto } from './dto/import.dto';
-import { ExportTypeEnum } from './enums/export-type.enum';
 import { TaskDto, TaskStateMap } from './dto/task.dto';
-import { TaskStatesEnum } from './enums/task-states.enum';
+import { ExportImportProcessor } from './export-import.processor';
+import { TaskDocument } from './schemas/task.schema';
+import { TaskRepository } from './schemas/task.repository';
+import { plainToInstance } from 'class-transformer';
 
 @Injectable()
 export class ExportImportService {
   private readonly logger = new Logger(ExportImportService.name);
 
-  private exports: { [bookId: string]: ExportDto } = {};
-  private imports: { [bookId: string]: ImportDto } = {};
+  constructor(
+    private readonly taskRepository: TaskRepository,
+    private readonly exportImportProcessor: ExportImportProcessor,
+  ) {}
 
-  createExport(exportRequest: ExportDto): ExportDto {
-    this.logger.log('creating export ' + JSON.stringify(exportRequest));
-    this.exports[exportRequest.bookId] = exportRequest;
-    this.executeExport(exportRequest).then((task) => {
-      task.state = TaskStatesEnum.Finished;
-      task.updated_at = new Date();
-      this.exports[task.bookId] = task;
-      this.logger.log('export task updated with id: ' + task.bookId);
-      this.logger.log(JSON.stringify(this.exports));
-    });
-    this.logger.log(
-      'export request created and scheduled for processing',
-      exportRequest.bookId,
-    );
-    return exportRequest;
-  }
-
-  getAllExports(): TaskStateMap {
-    this.logger.log('getting all exports');
-    return ExportImportService.groupByState(this.exports);
-  }
-
-  createImport(importRequest: ImportDto): ImportDto {
-    this.logger.log('creating import ' + JSON.stringify(importRequest));
-    this.imports[importRequest.bookId] = importRequest;
-    this.executeImport(importRequest).then((task) => {
-      task.state = TaskStatesEnum.Finished;
-      task.updated_at = new Date();
-      this.imports[task.bookId] = task;
-      this.logger.log('import task updated with id: ' + task.bookId);
-    });
-    this.logger.log(
-      'import request created and scheduled for processing',
-      importRequest.bookId,
-    );
-    return importRequest;
-  }
-
-  getAllImports(): TaskStateMap {
-    this.logger.log('getting all imports');
-    return ExportImportService.groupByState(this.imports);
-  }
-
-  private executeExport(exportRequest: ExportDto): Promise<ExportDto> {
-    const duration = exportRequest.type === ExportTypeEnum.Epub ? 10000 : 25000;
-    this.logger.log('starting export task with ' + duration + 'ms');
-    return new Promise((resolve) =>
-      setTimeout(() => {
-        this.logger.log(
-          'export task finished successfully with id: ' + exportRequest.bookId,
-        );
-        resolve(exportRequest);
-      }, duration),
-    );
-  }
-
-  private executeImport(importRequest: ImportDto): Promise<ImportDto> {
-    const duration = 60000;
-    this.logger.log('starting export task with ' + duration + 'ms');
-    return new Promise((resolve) =>
-      setTimeout(() => {
-        this.logger.log(
-          'import task finished successfully with id: ' + importRequest.bookId,
-        );
-        resolve(importRequest);
-      }, duration),
-    );
-  }
-
-  private static groupByState(tasks: { [p: string]: TaskDto }): TaskStateMap {
+  private static groupByState(tasks: TaskDto[]): TaskStateMap {
     return Object.values(tasks).reduce((stateGroup, task) => {
       stateGroup[task.state] = stateGroup[task.state] || [];
       stateGroup[task.state].push(task);
       return stateGroup;
     }, {});
+  }
+
+  async createExport(exportRequest: ExportDto): Promise<ExportDto> {
+    this.logger.log('creating export ' + JSON.stringify(exportRequest));
+    try {
+      const exportTask = await this.taskRepository.create(exportRequest);
+      await this.exportImportProcessor.execute(exportTask);
+      this.logger.log(
+        'export request created and scheduled for processing',
+        exportRequest.bookId,
+      );
+    } catch (error) {
+      if (error.code === 11000 || error.code === 11001) {
+        throw new BadRequestException(
+          'Task with the provided bookId already exists.',
+        );
+      } else {
+        throw error;
+      }
+    }
+    return exportRequest;
+  }
+
+  async getAllExports(): Promise<TaskStateMap> {
+    this.logger.log('getting all exports');
+    const taskList: TaskDocument[] = await this.taskRepository.findAllExports();
+    const exportList = taskList.map((t) =>
+      plainToInstance(ExportDto, t, {
+        excludeExtraneousValues: true,
+      }),
+    );
+    return ExportImportService.groupByState(exportList);
+  }
+
+  async createImport(importRequest: ImportDto): Promise<ImportDto> {
+    this.logger.log('creating import ' + JSON.stringify(importRequest));
+    try {
+      const importTask = await this.taskRepository.create(importRequest);
+      await this.exportImportProcessor.execute(importTask);
+      this.logger.log(
+        'import request created and scheduled for processing',
+        importRequest.bookId,
+      );
+    } catch (error) {
+      if (error.code === 11000 || error.code === 11001) {
+        throw new BadRequestException(
+          'Task with the provided bookId already exists.',
+        );
+      } else {
+        throw error;
+      }
+    }
+    return importRequest;
+  }
+
+  async getAllImports(): Promise<TaskStateMap> {
+    this.logger.log('getting all imports');
+    const taskList: TaskDocument[] = await this.taskRepository.findAllImports();
+    const importList = taskList.map((t) =>
+      plainToInstance(ImportDto, t, {
+        excludeExtraneousValues: true,
+      }),
+    );
+    return ExportImportService.groupByState(importList);
   }
 }

@@ -6,82 +6,94 @@ import { ImportDto } from './dto/import.dto';
 import { TaskStateMap } from './dto/task.dto';
 import { ExportTypeEnum } from './enums/export-type.enum';
 import { ImportTypeEnum } from './enums/import-type.enum';
+import { ExportImportProcessor } from './export-import.processor';
+import { TaskRepository } from './schemas/task.repository';
 
 describe('ExportImportController', () => {
   let controller: ExportImportController;
   let service: ExportImportService;
+  let taskRepository: TaskRepository;
+  let exportImportProcessor: ExportImportProcessor;
+  let taskModel;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [ExportImportController],
-      providers: [ExportImportService],
+      providers: [
+        ExportImportService,
+        {
+          provide: TaskRepository,
+          useValue: {
+            create: jest.fn(),
+            findAllExports: jest.fn(),
+          },
+        },
+        {
+          provide: ExportImportProcessor,
+          useValue: {
+            execute: jest.fn(),
+          },
+        },
+      ],
     }).compile();
 
     controller = module.get<ExportImportController>(ExportImportController);
     service = module.get<ExportImportService>(ExportImportService);
+    taskRepository = module.get<TaskRepository>(TaskRepository);
+    exportImportProcessor = module.get<ExportImportProcessor>(
+      ExportImportProcessor,
+    );
   });
 
   describe('createExportRequest', () => {
-    it('should create an export task', () => {
-      // Create a sample ExportDto
+    it('should create an export task', async () => {
       const exportDto: ExportDto = new ExportDto();
-      exportDto.type = ExportTypeEnum.Pdf; // Set the type to a valid value
+      exportDto.type = ExportTypeEnum.Pdf;
 
-      // Mock the exportImportService's createExport method
       const mockCreatedTask = { ...exportDto };
-      jest.spyOn(service, 'createExport').mockReturnValue(mockCreatedTask);
+      jest.spyOn(service, 'createExport').mockResolvedValue(mockCreatedTask);
 
-      // Call the controller method
-      const createdExportTask = controller.createExportRequest(exportDto);
+      const createdExportTask = await controller.createExportRequest(exportDto);
 
-      // Assert that the service method was called with the expected input
       expect(service.createExport).toHaveBeenCalledWith(exportDto);
-
-      // Assert that the result matches the mocked task
       expect(createdExportTask).toEqual(mockCreatedTask);
     });
   });
 
   describe('getExportRequests', () => {
-    it('should return a list of export tasks', () => {
+    it('should return a list of export tasks', async () => {
       const exportTasks: TaskStateMap = {};
-      jest.spyOn(service, 'getAllExports').mockReturnValue(exportTasks);
+      jest.spyOn(service, 'getAllExports').mockResolvedValue(exportTasks);
 
-      const result = controller.getExportRequests();
-      // Assert the result matches the expected export tasks
+      const result = await controller.getExportRequests();
+      expect(service.getAllExports).toHaveBeenCalled();
       expect(result).toEqual(exportTasks);
     });
   });
 
   describe('createImportRequest', () => {
-    it('should create an import task', () => {
-      // Create a sample ImportDto
+    it('should create an import task', async () => {
       const importDto: ImportDto = new ImportDto();
       importDto.type = ImportTypeEnum.Pdf;
-      importDto.url = 'https://reedsy.com/sample.pdf';
+      importDto.url = 'https://some-url.com/sample.pdf';
 
-      // Mock the exportImportService's createImport method
       const mockCreatedTask = { ...importDto };
-      jest.spyOn(service, 'createImport').mockReturnValue(mockCreatedTask);
+      jest.spyOn(service, 'createImport').mockResolvedValue(mockCreatedTask);
 
-      // Call the controller method
-      const createdImportTask = controller.createImportRequest(importDto);
+      const createdImportTask = await controller.createImportRequest(importDto);
 
-      // Assert that the service method was called with the expected input
       expect(service.createImport).toHaveBeenCalledWith(importDto);
-
-      // Assert that the result matches the mocked task
       expect(createdImportTask).toEqual(mockCreatedTask);
     });
   });
 
   describe('getImportRequests', () => {
-    it('should return a list of import tasks', () => {
+    it('should return a list of import tasks', async () => {
       const importTasks: TaskStateMap = {};
-      jest.spyOn(service, 'getAllImports').mockReturnValue(importTasks);
+      jest.spyOn(service, 'getAllImports').mockResolvedValue(importTasks);
 
-      const result = controller.getImportRequests();
-      // Assert the result matches the expected import tasks
+      const result = await controller.getImportRequests();
+      expect(service.getAllImports).toHaveBeenCalled();
       expect(result).toEqual(importTasks);
     });
   });

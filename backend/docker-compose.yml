@@ -1,0 +1,27 @@
+version: '2.2'
+services:
+
+  backend:
+    build: .
+    environment:
+      - MONGO_URL=mongodb://admin_user:admin_pass@mongo_db/backend?authSource=admin
+    ports:
+      - "3000:3000"
+    depends_on:
+      - 'mongo_db'
+    links:
+      - mongo_db
+  mongo_db:
+    image: mongo:4.4
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=admin_user
+      - MONGO_INITDB_ROOT_PASSWORD=admin_pass
+    volumes:
+      - data00:/data/db
+    ports:
+      - "27017:27017"
+
+volumes:
+  data00:
+    driver: local
+

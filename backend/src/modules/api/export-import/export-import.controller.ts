@@ -1,10 +1,9 @@
-import { Controller, Get, Post, Body } from '@nestjs/common';
+import { Body, Controller, Get, Post } from '@nestjs/common';
 import { ExportDto } from './dto/export.dto';
 import { ImportDto } from './dto/import.dto';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ExportImportService } from './export-import.service';
 import { TaskStateMap } from './dto/task.dto';
-import exp from 'constants';
 
 @Controller({ version: '1', path: 'tasks' })
 @ApiTags('tasks')
@@ -13,27 +12,31 @@ export class ExportImportController {
 
   @Post('exports')
   @ApiOperation({ summary: 'Create export task' })
-  createExportRequest(@Body() exportRequest: ExportDto): ExportDto {
+  async createExportRequest(
+    @Body() exportRequest: ExportDto,
+  ): Promise<ExportDto> {
     const exportTask: ExportDto = Object.assign(new ExportDto(), exportRequest);
-    return this.exportImportService.createExport(exportTask);
+    return await this.exportImportService.createExport(exportTask);
   }
 
   @Get('exports')
   @ApiOperation({ summary: 'List all existing export tasks' })
-  getExportRequests(): TaskStateMap {
-    return this.exportImportService.getAllExports();
+  async getExportRequests(): Promise<TaskStateMap> {
+    return await this.exportImportService.getAllExports();
   }
 
   @Post('imports')
   @ApiOperation({ summary: 'Create import task' })
-  createImportRequest(@Body() importRequest: ImportDto): ImportDto {
+  async createImportRequest(
+    @Body() importRequest: ImportDto,
+  ): Promise<ImportDto> {
     const importTask: ImportDto = Object.assign(new ImportDto(), importRequest);
-    return this.exportImportService.createImport(importTask);
+    return await this.exportImportService.createImport(importTask);
   }
 
   @Get('imports')
   @ApiOperation({ summary: 'List all existing import tasks' })
-  getImportRequests(): TaskStateMap {
-    return this.exportImportService.getAllImports();
+  async getImportRequests(): Promise<TaskStateMap> {
+    return await this.exportImportService.getAllImports();
   }
 }
